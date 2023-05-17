@@ -1,6 +1,9 @@
  //
 // #Created by guill on 26/04/2023.
 //
+#include <stdlib.h>
+#include <stdio.h>
+
 #include <iostream>
 #include <cstring>
 #define MAX_LENGTH 15
@@ -71,15 +74,144 @@ void inituser(){
     printf("Tu ID es: %d",usuarios.last->num);
 }
 void initfuser(){
+    char nombreArchivo[100],nombre[MAX_LENGTH],correo[MAX_LENGTH], hobby[4][MAX_LENGTH],edadstr[MAX_LENGTH];
+    char caracter,ciudad[MAX_LENGTH],separation;
+    int edad, i=0, j=0;
+    int* edapunt;
+    bool name=FALSE,age=FALSE,mail=FALSE,city=FALSE, hobbies=FALSE;
+    FILE *archivo;
+    separation=59;
 
+    // Pedir el nombre del archivo al usuario
+    printf("Ingrese el nombre del archivo: ");
+    scanf("%s", nombreArchivo);
+
+    // Abrir el archivo
+    archivo = fopen(nombreArchivo, "r");
+
+    // Verificar si el archivo se abrió correctamente
+    if (archivo == NULL) {
+        printf("No se pudo abrir el archivo.\n");
+        return;
+    }
+
+    // Leer el contenido del archivo y mostrarlo en pantalla
+    printf("Contenido del archivo:\n");
+    while ((caracter = fgetc(archivo)) != NULL) {
+        if (name==FALSE) {
+            if ( caracter==separation){
+                i=0;
+                printf("name: %s\n",nombre);
+                name=TRUE;
+            }
+            else {
+                nombre[i] = caracter;
+                i++;
+            }
+        }
+        else if (age==FALSE){
+            if (caracter==separation){
+                i=0;
+                edad=atoi("46");
+
+                age=TRUE;
+                printf("age: %s\n",edadstr);
+            }
+            else {
+                edadstr[i]=caracter;
+
+                i++;
+            }
+
+
+        }
+        else if (mail==FALSE){
+            if (caracter==separation){
+                i=0;
+                printf("correu: %s\n",correo);
+                mail=TRUE;
+            }
+            else {
+                correo[i]=caracter;
+
+                i++;
+            }
+
+
+
+
+        }
+        else if (city==FALSE){
+            if (caracter==separation){
+                i=0;
+                printf("ciutat: %s\n",ciudad);
+                city=TRUE;
+            }
+            else {
+                ciudad[i]=caracter;
+
+                i++;
+            }
+
+
+
+
+
+        }
+        else if(hobbies==FALSE){
+            if (caracter==separation){
+                if(j==4){
+                    strcpy(nombre,"");
+                    strcpy(correo,"");
+                    strcpy(hobby[0],"");
+                    strcpy(hobby[1],"");
+                    strcpy(hobby[2],"");
+                    strcpy(hobby[3],"");
+
+                    strcpy(edadstr,"");
+                    strcpy(ciudad,"");
+                    i=0;
+                    j=0;
+                    name=FALSE;
+                    age=FALSE;
+                    mail=FALSE;
+                    city=FALSE;
+                    hobbies=FALSE;
+                }
+                else{
+                    printf("Hobby%d: %s\n",(j+1),hobby[j]);
+                    j++;
+                    i=0;
+                }
+
+
+            }
+            else {
+                hobby[j][i]=caracter;
+
+                i++;
+            }
+
+
+
+        }
+
+
+    }
+
+    // Cerrar el archivo
+    fclose(archivo);
 }
 void listuser() {
+    char a;
     Node* user = usuarios.first;
     printf("Lista usuarios:\n");
     while (user) {
         printf("ID %d: %s\n", user->num, user->nombre);
-        user = user->siguiente;
+        user= user->siguiente;
     }
+    printf("Introduzca cualquier caracter para continuar:");
+    scanf("%s",a);
  }
 
 Node* operuserfound(){
@@ -147,9 +279,9 @@ void operusermenu(){
 }
 
 void menu() {
-    int opcion;
     bool exit = FALSE;
     while (exit == FALSE) {
+        int opcion;
 
         printf("\nBienvenido a nuestra aplicacion\n");
         printf(
@@ -159,18 +291,20 @@ void menu() {
                 "4. Salir\n"
                 "Elija una opcion:"
         );
+        opcion=-1;
         scanf("%d", &opcion);
+        printf("%d",opcion);
         printf("\n ");
         if (opcion == 1) {
             int op2;
             printf("1. Crear usuario manualmente\n2.iniciar usuario mediante un fichero");
             scanf("%d",&op2);
            while (op2!=1 && op2!=2) {
-
-               if (op2 == 1) inituser();
-               if (op2 == 2) initfuser();
                printf("Introduzca una opcion valida");
            }
+           if (op2 == 1) inituser();
+           if (op2 == 2) initfuser();
+
 
         }
         else if (opcion == 2)listuser();
@@ -180,6 +314,4 @@ void menu() {
 
 
     }
-
 }
-
